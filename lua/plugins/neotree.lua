@@ -18,7 +18,5 @@ return {
         end
       end,
     })
-    vim.keymap.set('n', '<C-n>', ':Neotree<CR>', {})
-    vim.keymap.set('n', '<leader>n', ':Neotree<CR>', {}) 
   end
 }
