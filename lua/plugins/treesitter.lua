@@ -3,7 +3,17 @@ return {
   build = ":TSUpdate",
   tag = "v0.10.0",
   config = function()
-    require("nvim-treesitter.config").setup({
+    local ok, ts = pcall(require, "nvim-treesitter.configs")
+    if not ok then
+      ok, ts = pcall(require, "nvim-treesitter.config")
+    end
+
+    if not ok then
+      vim.api.nvim_echo({ { "nvim-treesitter: module introuvable", "ErrorMsg" } }, false, {})
+      return
+    end
+
+    ts.setup({
       ensure_installed = { 
         "lua", 
         "javascript", "html", "css", 
