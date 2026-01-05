@@ -11,34 +11,28 @@ end
 
 local function make_resize(key_1, key_2, type_resize, delta_1, delta_2)
   return function()
-    v = vim.fn.winnr()
-    if vim.fn.winnr(key_1) == v and vim.fn.winnr(key_2) ~= v then
-      vim.cmd(type_resize .. delta_1)
+    -- Ne fait rien si je suis seul
+    if vim.fn.winnr(key_2) == vim.fn.winnr(key_1) then
+      return
+    end
+
+    if vim.fn.winnr(key_1) == vim.fn.winnr() then
+      vim.cmd(string.format("%s%+d", type_resize, delta_1))
     else
-      vim.cmd(type_resize .. delta_2)
+      vim.cmd(string.format("%s%+d", type_resize, delta_2))
     end
   end
 end
 
-local resize_with_maj_horizontal_up = make_resize("j", "k", "resize ", "+5", "-5")
-local resize_with_maj_horizontal_down = make_resize("j", "k", "resize ", "-5", "+5")
-local resize_with_maj_vertical_left = make_resize("l", "h", "vertical resize ", "+5", "-5")
-local resize_with_maj_vertical_right = make_resize("l", "h", "vertical resize ", "-5", "+5")
-
-vim.keymap.set("n", "<S-A-Up>", resize_with_maj_horizontal_up, { silent = true })
-vim.keymap.set("n", "<S-A-Left>", resize_with_maj_vertical_left, { silent = true })
-vim.keymap.set("n", "<S-A-Down>", resize_with_maj_horizontal_down, { silent = true })
-vim.keymap.set("n", "<S-A-Right>", resize_with_maj_vertical_right, { silent = true })
-
-local resize_horizontal_up = make_resize("j", "k", "resize ", "+1", "-1")
-local resize_horizontal_down = make_resize("j", "k", "resize ", "-1", "+1")
-local resize_vertical_left = make_resize("l", "h", "vertical resize ", "+1", "-1")
-local resize_vertical_right = make_resize("l", "h", "vertical resize ", "-1", "+1")
-
-vim.keymap.set("n", "<A-Up>", resize_horizontal_up, { silent = true })
-vim.keymap.set("n", "<A-Left>", resize_vertical_left, { silent = true })
-vim.keymap.set("n", "<A-Down>", resize_horizontal_down, { silent = true })
-vim.keymap.set("n", "<A-Right>", resize_vertical_right, { silent = true })
+for _, m in ipairs({
+  { dir="Up",    key1="j", key2="k", prefix="",          d1= 1, d2=-1 },
+  { dir="Down",  key1="j", key2="k", prefix="",          d1=-1, d2= 1 },
+  { dir="Left",  key1="l", key2="h", prefix="vertical ", d1= 1, d2=-1 },
+  { dir="Right", key1="l", key2="h", prefix="vertical ", d1=-1, d2= 1 },
+}) do
+  vim.keymap.set("n", "<A-"..m.dir..">", make_resize(m.key1, m.key2, m.prefix.."resize ", m.d1, m.d2), { silent=true })
+  vim.keymap.set("n", "<S-A-"..m.dir..">", make_resize(m.key1, m.key2, m.prefix.."resize ", 5*m.d1, 5*m.d2), { silent=true })
+end
 
 -- Désindenter
 vim.keymap.set("n", "<S-Tab>", "<<", { silent = true })
