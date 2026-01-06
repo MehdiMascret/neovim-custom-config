@@ -43,7 +43,7 @@ return {
     opts.window.mappings = opts.window.mappings or {}
     opts.window.mappings = {
       ["<Right>"] = "open",
-      ["<Left>"] = "navigate_up",
+      ["<Left>"] = "open",
       ["<CR>"] = "enter_smart",
     }
 
