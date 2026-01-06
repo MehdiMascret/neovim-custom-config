@@ -9,7 +9,9 @@ return {
   opts = function(_, opts)
     opts = opts or {}
 
-    -- commande custom "smart enter"
+    -- Enter Smart sur un : 
+    -- - dossier affiche se centre sur le dossier 
+    -- - fichier affiche le fichier dans le précedent buffer
     opts.commands = opts.commands or {}
     opts.commands.enter_smart = function(state)
       local node = state.tree:get_node()
@@ -25,16 +27,29 @@ return {
       end
     end
 
-    -- mappings (global neo-tree window)
+    -- Afficher les fichiers invisible
+    opts.filesystem = opts.filesystem or {}
+    opts.filesystem.filtered_items = opts.filesystem.filtered_items or {}
+    opts.filesystem.filtered_items = {
+      visible = true,
+      show_hidden_count = true,
+      hide_dotfiles = false,
+      hide_gitignored = false,
+      hide_hidden = false,
+    }
+
+    -- mappings
     opts.window = opts.window or {}
     opts.window.mappings = opts.window.mappings or {}
-
-    opts.window.mappings["<Right>"] = "open"
-    opts.window.mappings["<Left>"] = "navigate_up"
-    opts.window.mappings["<CR>"] = "enter_smart"
+    opts.window.mappings = {
+      ["<Right>"] = "open",
+      ["<Left>"] = "navigate_up",
+      ["<CR>"] = "enter_smart",
+    }
 
     return opts
-  end,
+  end
+  ,
   config = function(_, opts)
     require("neo-tree").setup(opts)
     vim.api.nvim_create_autocmd("VimEnter", {
